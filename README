@@ -1,0 +1,7 @@
+I use this script at work to monitor our Hudson builds (a specific view/collection of builds).
+
+It drives an Arduino board with tonnes of LED's in it (Red and Blue) - schematic to follow one day.
+
+Usage: monitor_builds.rb <hudson host> <path to view>
+Example: ./monitor-builds.rb hudson2 product/CI
+
