@@ -1,3 +1,15 @@
+This directory contains two different build-light solutions.
+
+1. A ruby script that parses Hudson/Jenkins json output and drives an arduino (arduino code not included)
+2. A standalone arduino project that leverages a network card to poll Hudson/Jenkins directly
+
+Standalone arduino
+==================
+All the code for #2 is in the src folder.
+
+
+Ruby script
+===========
 I use this script at work to monitor our Hudson builds (a specific view/collection of builds).
 
 It drives an Arduino board with tonnes of LED's in it (Red and Blue) - schematic to follow one day.
