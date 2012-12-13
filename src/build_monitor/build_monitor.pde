@@ -1,3 +1,4 @@
+#include <SPI.h>
 #include <stdlib.h>
 #include <Ethernet.h>
 
