@@ -14,7 +14,7 @@ char* search = "/~ivanjensen1/json";  // the search request
 #else
 byte ip[] = {10, 10, 30, 247};                        // this ip 
 byte server[] = {10, 10, 2, 32};                // "builds"
-char* search = "/pd/view/Build%20of%20Builds/api/json";  // the search request
+char* search = "/pd/view/Deuces-Wild-Release/view/Deuces-Wild-Release-CI/api/json";  // the search request
 #endif
 
 char maxId[11] = "0";                                // since_id
