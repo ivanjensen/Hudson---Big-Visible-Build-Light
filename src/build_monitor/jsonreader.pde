@@ -250,6 +250,8 @@ void readResponse(Client client) {
  *  UNDEFINED_BUILD_PROBLEM - unexpected problem (no builds, no connection to server, etc)
  *  BUILDS_GOOD - all builds ok
  *  BUILDS_BAD - at least one build broken
+ *  
+ *  TODO: Add an extra GET to a static location on the build server that can supply the URI to query.
  */
 int buildStatus() {
   Ethernet.begin(mac, ip);
