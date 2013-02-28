@@ -10,11 +10,11 @@ byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};   // mac adress
 #ifdef LOCATION_HOME
 byte ip[] = {192, 168, 2, 95};                        // this ip 
 byte server[] = {192, 168, 2, 101};                // search.twitter.com
-char* search = "/~ivanjensen1/json";  // the search request
+char* search = "/~ivanjensen1/servesJsonApiUri";  // the search request
 #else
 byte ip[] = {10, 10, 30, 247};                        // this ip 
 byte server[] = {10, 10, 2, 32};                // "builds"
-char* search = "/pd/view/Deuces-Wild-Release/view/Deuces-Wild-Release-CI/api/json";  // the search request
+char* search = "/pd/active";  // the search request
 #endif
 
 char maxId[11] = "0";                                // since_id
@@ -246,12 +246,28 @@ void readResponse(Client client) {
   }
 }
 
+
+/*
+ * Queries the search URI and returns the JSON API URI.
+ */ 
+char* getJsonUri(Client client) {
+  client.print("GET ");
+  client.print(search);
+  client.println(" HTTP/1.0");
+  client.println();
+
+  skipHeaders(client);
+
+  char uri[180];
+  readString(client, uri);
+  return uri;
+}
+
+
 /* Returns:
  *  UNDEFINED_BUILD_PROBLEM - unexpected problem (no builds, no connection to server, etc)
  *  BUILDS_GOOD - all builds ok
  *  BUILDS_BAD - at least one build broken
- *  
- *  TODO: Add an extra GET to a static location on the build server that can supply the URI to query.
  */
 int buildStatus() {
   Ethernet.begin(mac, ip);
@@ -260,12 +276,16 @@ int buildStatus() {
   Serial.println("\nconnecting ...");
   Client client(server, 80);
   if (client.connect()) {
-    Serial.println("ok");
+    char* jsonUri = getJsonUri(client);
+    Serial.print("ok: ");
+    Serial.println(jsonUri);
+
     client.print("GET ");
-    client.print(search);
+    client.print(jsonUri);
     client.println(" HTTP/1.0");
     client.println();
     readResponse(client);
+
     Serial.println("disconnecting");
     client.stop();
   } 
