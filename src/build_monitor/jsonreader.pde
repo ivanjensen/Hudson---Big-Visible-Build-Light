@@ -10,11 +10,11 @@ byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};   // mac adress
 #ifdef LOCATION_HOME
 byte ip[] = {192, 168, 2, 95};                        // this ip 
 byte server[] = {192, 168, 2, 101};                // search.twitter.com
-char* search = "/~ivanjensen1/json";  // the search request
+char* search = "/~ivanjensen1/servesJsonApiUri";  // the search request
 #else
 byte ip[] = {10, 10, 30, 247};                        // this ip 
 byte server[] = {10, 10, 2, 32};                // "builds"
-char* search = "/pdci/view/PD-Trunk/api/json";  // the search request
+char* search = "/pd/userContent/active";  // the search request
 #endif
 
 char maxId[11] = "0";                                // since_id
@@ -246,6 +246,37 @@ void readResponse(Client client) {
   }
 }
 
+
+/*
+ * Queries the search URI and returns the JSON API URI.
+ */ 
+char* getJsonUri(Client uriClient) {
+  uriClient.print("GET ");
+  uriClient.print(search);
+  uriClient.println(" HTTP/1.0");
+  uriClient.println();
+
+  skipHeaders(uriClient);
+
+  char uri[180];
+  char c;
+  int i;
+  for (i = 0 ; i < 180 ; i++) {
+    c = readChar(uriClient);
+    if ((c == '\n') || (c == 0)) {
+      break;
+    }
+    uri[i] = c;
+  }
+  uri[i] = '\0';
+
+  Serial.print("got json URI: ");
+  Serial.println(uri);
+  uriClient.flush();
+  return uri;
+}
+
+
 /* Returns:
  *  UNDEFINED_BUILD_PROBLEM - unexpected problem (no builds, no connection to server, etc)
  *  BUILDS_GOOD - all builds ok
@@ -258,17 +289,26 @@ int buildStatus() {
   Serial.println("\nconnecting ...");
   Client client(server, 80);
   if (client.connect()) {
-    Serial.println("ok");
-    client.print("GET ");
-    client.print(search);
-    client.println(" HTTP/1.0");
-    client.println();
-    readResponse(client);
-    Serial.println("disconnecting");
+    char* jsonUri = getJsonUri(client);
     client.stop();
-  } 
-  else {
-    Serial.println("failed");
+
+    if (client.connect()) {
+      Serial.print("\nconnecting to: ");
+      Serial.println(jsonUri);
+
+      client.print("GET ");
+      client.print(jsonUri);
+      client.println(" HTTP/1.0");
+      client.println();
+      readResponse(client);
+  
+      Serial.println("disconnecting");
+      client.stop();
+    } else {
+      Serial.println("failed to get JSON data");
+    }
+  } else {
+    Serial.println("failed to get active URI");
   }
   return buildsOk;
 }
