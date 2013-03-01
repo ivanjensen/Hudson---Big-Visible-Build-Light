@@ -7,6 +7,10 @@ Standalone arduino
 ==================
 All the code for #2 is in the src folder.
 
+Every 20 seconds, the Arduino will make a request to the URI held in the search constant to obtain the URI 
+for the Jenkin's view/build that you wish to monitor.  A second request is made to the view's URI to obtain 
+the JSON status report which is processed by the Arduino to update the status LEDs.
+
 
 Ruby script
 ===========
